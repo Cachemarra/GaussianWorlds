@@ -15,7 +15,7 @@ Both builds are static HTML/JS apps and run directly in the browser (HTTPS enabl
 | Model / Folder | Live Demo | Details |
 | :--- | :--- | :--- |
 | **Gemini — Neon High** ([`neon-high/`](./neon-high/)) | [Launch Neon High Demo](https://cachemarra.github.io/GaussianWorlds/neon-high/) | 7 iterations · 3 parallel subagents · 7 biomes · 3 splat presets · VR menu & flashlight |
-| **Claude — Opus 5.5** ([`opus-5.5/`](./opus-5.5/)) | [Launch Opus 5.5 Demo](https://cachemarra.github.io/GaussianWorlds/opus-5.5/) | Launched at iteration 4 (accumulated spec) · 4 biomes · URL-configurable budget · Playwright headless test |
+| **Claude — Opus 5.5** ([`opus-5.5/`](./opus-5.5/)) | [Launch Opus 5.5 Demo](https://cachemarra.github.io/GaussianWorlds/opus-5.5/) | 1 implementation iteration (3 consolidated spec blocks) · 0 subagents · 4 biomes · URL-configurable budget · Playwright headless test |
 
 ---
 
@@ -23,8 +23,8 @@ Both builds are static HTML/JS apps and run directly in the browser (HTTPS enabl
 
 | Aspect | `neon-high/` (Gemini Neon High) | `opus-5.5/` (Claude Opus 5.5) |
 | :--- | :--- | :--- |
-| **Generation History** | 7 distinct iterations (8 raw prompts; initial prompt sent twice) | Single consolidated run with requirements accumulated through iteration 4 |
-| **Subagents Used** | 3 parallel subagents (during iteration 7) | None |
+| **Generation History** | 7 distinct iterations (8 raw prompts; initial prompt sent twice) | 1 implementation iteration (single consolidated prompt with 3 `---`-separated spec blocks; no Quest feedback or follow-up fixes) |
+| **Subagents Used** | 3 parallel subagents (during iteration 7) | 0 (direct tools only: Bash, Write, Edit, Playwright) |
 | **Biomes** | 7 (Meadow, Conifer Forest, Cave, Sea, Liminal, Dreamcore, Terrorcore) | 4 (Meadow, Conifer Forest, Cave, Sea) |
 | **Rendering & Visuals** | 2DGS architecture & water, directional lighting/AO, GPU/VR flashlight, quality presets (`Default`, `High 300k`, `ULTRAX 500k`) | Dynamic chunked splats with URL tuning (`?budget=`, `?radius=`, `?seed=`, `?day=`), GPU wind & wave animation |
 | **Audio & Events** | Generative day/night & dark-biome music, surface footsteps, 3-mode horror director (`peripheral` / `false_alarm` / `stalker`), Liminal gaze-triggered doors, 7 biome anomalies | Procedural piano/flute music, day/night ambience, spatial footsteps & peripheral night figure (`pop` on gaze) |
@@ -40,8 +40,8 @@ Both builds are static HTML/JS apps and run directly in the browser (HTTPS enabl
 
 1. **Initial PoC** — Meadow procedural world, Spark splats, day/night cycle, wind, spatial night-figure event, Desktop + Quest 3 WebXR.
 2. **Ambient audio & music** — Background nature and nocturnal accompaniment.
-3. **3 new biomes + movement** — Conifer forest, Cave, Sea (with diving), water bodies, footsteps, and jumping.
-4. **Quest 3 playtest feedback** — Stricter peripheral event angle, VR hands + 3D floating menu, left-stick heading fix, and object collisions. *(Claude Opus 5.5 was launched at this stage with the accumulated requirements.)*
+3. **3 new biomes + movement** — Conifer forest, Cave, Sea (with diving), water bodies, footsteps, and jumping. *(Claude Opus 5.5 was launched with the accumulated specs through this stage.)*
+4. **Quest 3 playtest feedback** — Stricter peripheral event angle, VR hands + 3D floating menu, left-stick heading fix, and object collisions.
 5. **3 surreal biomes + life + quality** — Liminal, Dreamcore, Terrorcore, creatures, `High (300k)` / `ULTRAX (500k)` presets, relaxing/uncanny generative music, and fixed sky dome.
 6. **Design review** — Brainstorming visual quality and gameplay improvements.
 7. **Final upgrade pass** — Directional lighting/AO, 2DGS architecture & water, GPU/VR flashlight, 3-mode horror director, Liminal gaze-triggered doors, and 7 biome anomalies.
@@ -51,6 +51,29 @@ Both builds are static HTML/JS apps and run directly in the browser (HTTPS enabl
 1. **Visual World Engineer** — `terrain.js`, `sky.js`, `chunks.js`
 2. **Horror and Audio Engineer** — `nightEvent.js`, `audio.js`
 3. **Anomalies and VR Menu Engineer** — `anomalies.js`, `vrMenu.js`
+
+---
+
+## Claude (Opus 5.5) Iteration & Subagent Log
+
+### Iterations (1 implementation iteration)
+*4 total user messages in the session (messages 2–4 were only metadata/summary queries; no Quest 3 playtest feedback or follow-up fixes were applied):*
+
+1. **Full PoC (3 consolidated blocks separated by `---`)**
+   - **Base spec** — Procedural Gaussian Splats world with Spark, meadow, wind, day/night cycle, nocturnal figure event, and Desktop + Quest 3 WebXR support.
+   - **Audio addition** — Occasional piano/flute procedural music and daytime/nocturnal nature ambience.
+   - **Biomes & movement addition** — Conifer forest, cave, and diveable sea, water bodies in meadow/forest, footsteps, and jumping.
+
+### Subagents Launched (0 total)
+
+- **None** — Built using direct session tools only (`Bash`, `Write`, `Edit`, `Playwright`), without invoking the `Agent` tool.
+
+### Resulting Output
+
+- **Code**: `index.html` plus `js/main.js`, `js/world.js`, `js/audio.js`, `js/figure.js`, `js/config.js`, and `js/noise.js`.
+- **Biomes**: Meadow, conifer forest, cave, and diveable sea.
+- **Verified on desktop**: Headless Chromium + screenshot review confirming biomes, wind, day-to-night transition, and night event (pop on gaze and fade-out when ignored).
+- **Pending on Quest 3**: Real FPS, controls, snap turn, spatial audio, and figure legibility.
 
 ---
 
