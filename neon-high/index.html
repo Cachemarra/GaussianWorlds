@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="data:," />
+  <title>GaussianWorlds — Procedural Splat Worlds PoC</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #080c18;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #eef4ff;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+    #hud {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 20;
+      min-width: 298px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(8, 13, 24, 0.74);
+      border: 1px solid rgba(170, 204, 255, 0.25);
+      backdrop-filter: blur(6px);
+      font-size: 12px;
+      line-height: 1.55;
+      user-select: none;
+    }
+    #hud .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    #hud .title {
+      font-weight: 700;
+      font-size: 13px;
+      color: #a7d0ff;
+    }
+    #hud-menu-btn {
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(140, 205, 255, 0.45);
+      background: rgba(24, 52, 92, 0.7);
+      color: #e9f3ff;
+      font: 700 11px/1.4 monospace;
+      cursor: pointer;
+    }
+    #hud .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    #hud .label { color: #9cb2d4; }
+    #hud .val { font-weight: 700; color: #f4f8ff; }
+    #hud .hint {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(170, 204, 255, 0.16);
+      font-size: 11px;
+      color: #b7cae8;
+    }
+    #menu {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(4, 8, 16, 0.62);
+      backdrop-filter: blur(4px);
+    }
+    #menu[hidden] { display: none; }
+    .menu-card {
+      width: min(680px, 94vw);
+      padding: 18px 20px;
+      border-radius: 14px;
+      background: rgba(10, 17, 32, 0.94);
+      border: 1px solid rgba(130, 195, 255, 0.45);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+    }
+    .menu-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .menu-head h2 {
+      margin: 0;
+      font-size: 16px;
+      color: #8fd3ff;
+    }
+    .menu-sec {
+      margin-top: 11px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #8aa5cc;
+      letter-spacing: 0.05em;
+    }
+    .btn-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .btn-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .menu-btn {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(145, 190, 245, 0.35);
+      background: rgba(24, 38, 66, 0.85);
+      color: #eef5ff;
+      font: 700 12px/1.2 sans-serif;
+      cursor: pointer;
+    }
+    .menu-btn:hover { background: rgba(48, 86, 145, 0.92); }
+    .menu-btn.active {
+      background: rgba(34, 102, 172, 0.95);
+      border-color: #82d4ff;
+    }
+    .controls-box {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(16, 27, 48, 0.85);
+      border: 1px solid rgba(130, 185, 245, 0.25);
+      font-size: 11.5px;
+      line-height: 1.55;
+      color: #c9dcf7;
+    }
+    .controls-box strong { color: #ffffff; }
+    #toast {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 50;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: rgba(10, 18, 34, 0.90);
+      border: 1px solid rgba(130, 220, 255, 0.65);
+      color: #eef6ff;
+      font: 700 13px/1.3 sans-serif;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    #toast.show { opacity: 1; }
+    #vr-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      padding: 12px 24px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      background: rgba(12, 20, 38, 0.85);
+      color: #ffffff;
+      font: 700 15px/1 sans-serif;
+      cursor: pointer;
+    }
+    #vr-btn:hover { background: rgba(28, 48, 86, 0.92); }
+  </style>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
+        "@sparkjsdev/spark": "https://sparkjs.dev/releases/spark/2.4.0/spark.module.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="hud">
+    <div class="header">
+      <div class="title">GaussianWorlds PoC</div>
+      <button id="hud-menu-btn" type="button">Menú [Tab]</button>
+    </div>
+    <div class="row"><span class="label">FPS</span><span id="hud-fps" class="val">--</span></div>
+    <div class="row"><span class="label">Splats</span><span id="hud-splats" class="val">--</span></div>
+    <div class="row"><span class="label">Chunks</span><span id="hud-chunks" class="val">--</span></div>
+    <div class="row"><span class="label">Biome</span><span id="hud-biome" class="val">--</span></div>
+    <div class="row"><span class="label">Time</span><span id="hud-time" class="val">--</span></div>
+    <div class="row"><span class="label">Night Event</span><span id="hud-event" class="val">--</span></div>
+    <div class="row"><span class="label">Anomalías</span><span id="hud-anomalies" class="val">0 / 7</span></div>
+    <div class="hint">
+      Click: Look · WASD: Move · Space: Jump/Swim · C: Dive<br />
+      Tab: Menú · 1-7: Biomes · L: Linterna · Q: Calidad · N: Day/Night · F: Event
+    </div>
+  </div>
+  <div id="toast" aria-live="polite"></div>
+
+  <div id="menu" hidden>
+    <div class="menu-card">
+      <div class="menu-head">
+        <h2>Menú de Ajustes y Controles</h2>
+        <button id="menu-close" class="menu-btn" type="button">Cerrar [Tab]</button>
+      </div>
+      <div class="menu-sec">ENTORNO / BIOMAS (1–7)</div>
+      <div class="btn-grid">
+        <button class="menu-btn" data-action="biome:meadow" type="button">1 · Pradera</button>
+        <button class="menu-btn" data-action="biome:conifer" type="button">2 · Coníferas</button>
+        <button class="menu-btn" data-action="biome:cave" type="button">3 · Cueva</button>
+        <button class="menu-btn" data-action="biome:sea" type="button">4 · Mar</button>
+      </div>
+      <div class="btn-grid-3">
+        <button class="menu-btn" data-action="biome:liminal" type="button">5 · Liminal</button>
+        <button class="menu-btn" data-action="biome:dreamcore" type="button">6 · Dreamcore</button>
+        <button class="menu-btn" data-action="biome:terrorcore" type="button">7 · Terrorcore</button>
+      </div>
+      <div class="menu-sec">CALIDAD DE SPLATS / LOD [Q]</div>
+      <div class="btn-grid-3">
+        <button class="menu-btn active" data-action="quality:default" type="button">Default</button>
+        <button class="menu-btn" data-action="quality:high" type="button">High (300k)</button>
+        <button class="menu-btn" data-action="quality:ultrax" type="button">ULTRAX (500k)</button>
+      </div>
+      <div class="menu-sec">AJUSTES Y EVENTO</div>
+      <div class="btn-grid">
+        <button id="btn-night" class="menu-btn" data-action="toggleNight" type="button">Día / Noche</button>
+        <button id="btn-pause" class="menu-btn" data-action="togglePause" type="button">Pausar Ciclo</button>
+        <button id="btn-event" class="menu-btn" data-action="triggerEvent" type="button">Lanzar Evento</button>
+        <button id="btn-mute" class="menu-btn" data-action="toggleMute" type="button">Audio: ON</button>
+      </div>
+      <div class="btn-grid-3">
+        <button id="btn-flashlight" class="menu-btn" data-action="toggleFlashlight" type="button">Linterna: OFF [L]</button>
+        <button id="btn-collisions" class="menu-btn active" data-action="toggleCollisions" type="button">Colisiones Objetos: ON</button>
+        <button class="menu-btn" data-action="toggleHud" type="button">Mostrar / Ocultar HUD [H]</button>
+      </div>
+      <div class="controls-box">
+        <strong>Escritorio:</strong> Clic (Mirar) · <strong>WASD</strong> (Caminar / Nadar 3D) · <strong>Shift</strong> (Correr) · <strong>Espacio</strong> (Brincar / Subir) · <strong>C</strong> (Bucear) · <strong>L</strong> (Linterna) · <strong>1-7</strong> (Biomas) · <strong>Q</strong> (Calidad) · <strong>N</strong> (Día/Noche) · <strong>F</strong> (Evento) · <strong>M</strong> (Silencio) · <strong>Tab</strong> (Menú)<br />
+        <strong>Meta Quest 3:</strong> <strong>Stick Izq</strong> (Caminar hacia donde miras) · <strong>Stick Der</strong> (Giro 30°) · <strong>A</strong> (Brincar / Subir) · <strong>X</strong> (Bucear) · <strong>Grip Lateral Der</strong> (Linterna) · <strong>Grip Lateral Izq</strong> (Abrir Menú VR) · <strong>Trigger</strong> (Pulsar menú) · <strong>Y / B</strong> (Día-Noche / Evento)
+      </div>
+    </div>
+  </div>
+
+  <button id="vr-btn" hidden>Enter VR</button>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

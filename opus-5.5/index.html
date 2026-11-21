@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cloud Gaussian Worlds</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #000; font-family: system-ui, sans-serif; }
+    #hud { position: fixed; top: 8px; left: 8px; color: #fff; font: 13px/1.4 monospace; white-space: pre; background: rgba(0,0,0,.45); padding: 6px 9px; border-radius: 6px; pointer-events: none; }
+    #start { position: fixed; inset: 0; display: grid; place-items: center; color: #fff; background: rgba(0,0,0,.35); text-align: center; font-size: 15px; line-height: 1.6; }
+    #start b { font-size: 22px; }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
+      "@sparkjsdev/spark": "https://cdn.jsdelivr.net/npm/@sparkjsdev/spark@2.4.0/dist/spark.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="hud">cargando…</div>
+  <div id="start"><div><b>Click para empezar</b><br>
+    WASD mover · ratón mirar · Shift correr · Espacio saltar/nadar arriba · C bucear<br>
+    N día/noche · F evento nocturno · 1-4 pradera/bosque/cueva/mar · H HUD<br>
+    En Quest: botón "ENTER VR"</div></div>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
