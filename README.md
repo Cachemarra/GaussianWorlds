@@ -3,7 +3,7 @@
 An experimental comparison of procedural 3D world generation built **entirely from Gaussian Splats** (no external 3D meshes or scans), powered by **Three.js (`0.180.0`)** and **Spark (`@sparkjsdev/spark@2.4.0`)** via CDN with zero build chain, targeting both **Desktop** and **Meta Quest 3 (WebXR)**.
 
 > **Important note on comparison fairness:** This project started as a head-to-head test between **Gemini (Neon High)** and **Claude (Opus 5.5)**. However, the two folders are **not** at equal prompt depth:
-> - **`opus-5.5/`** was generated at the milestone of **iteration 4**, using the accumulated set of requirements up to that stage.
+> - **`opus-5.5/`** was generated at the milestone of **iteration 4** of Neon. That is, after 4 iterations with Neon, all the improvements and requests were wrote in a single prompt using the accumulated set of requirements up to that stage.
 > - **`neon-high/`** continued evolving through **7 distinct iterations** (including Quest 3 playtest feedback and a parallel multi-agent upgrade pass). The original `v0` snapshot of Neon High was not tracked in git, so only the final iterated build is stored here.
 
 ---
